@@ -1,8 +1,8 @@
 node_modules
 note.node_modules
 coverage
-lcov-report
 .nyc_output
 test
 git config advice.addIgnoredFile
 note.md
+lcov-report

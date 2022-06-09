@@ -6,7 +6,7 @@
   "scripts": {
     "serve": "node app.js",
     "test": "npx mocha --reporter spec",
-    "nyc": "nyc --reporter=lcov mocha --reporter spec"
+    "nyc": "nyc  mocha --reporter spec"
   },
   "author": "",
   "license": "ISC",
