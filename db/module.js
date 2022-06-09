@@ -1,160 +1,97 @@
 const { sequelize } = require("./sequelize");
 const { DataTypes, Model } = require("sequelize");
 
-class Style extends Model {}
-Style.init(
-  {
-    productId: {
-      type: DataTypes.INTEGER,
-    },
-    name: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    sale_price: {
-      type: DataTypes.INTEGER,
-    },
-    original_price: {
-      type: DataTypes.INTEGER,
-    },
-    default_style: {
-      type: DataTypes.INTEGER,
-    },
-  },
-  {
-    sequelize,
-    modelName: "Styles",
-    // createAt: false,
-    // updateAt: false,
-    timestamps: false,
-  }
-);
-
 class Product extends Model {}
 Product.init(
   {
-    name: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    slogan: {
-      type: DataTypes.TEXT,
-    },
-    description: {
-      type: DataTypes.TEXT,
-    },
-    category: {
-      type: DataTypes.TEXT,
-    },
-    default_price: {
-      type: DataTypes.INTEGER,
-    },
+    name: DataTypes.TEXT,
+    slogan: DataTypes.TEXT,
+    description: DataTypes.TEXT,
+    category: DataTypes.TEXT,
+    default_price: DataTypes.INTEGER,
   },
-  {
-    sequelize,
-    modelName: "Products",
-    createAt: false,
-    updateAt: false,
-    timestamps: false,
-  }
+  { sequelize, tableName: "Products", timestamps: false }
 );
 
-class Photos extends Model {}
-Photos.init(
+class feature extends Model {}
+feature.init(
   {
-    id: { type: DataTypes.INTEGER, primaryKey: true },
-    styleId: DataTypes.TEXT,
-    url: DataTypes.TEXT,
-    thumbnail_url: DataTypes.TEXT,
+    product_id: DataTypes.INTEGER,
+    feature: DataTypes.TEXT,
+    value: DataTypes.TEXT,
   },
-  {
-    sequelize,
-    modelName: "Photos",
-    createAt: false,
-    updateAt: false,
-    timestamps: false
-  }
+  { sequelize, tableName: "Features", timestamps: false }
 );
 
-class Carts extends Model {}
+Product.hasMany(feature, { foreignKey: "product_id" });
+feature.belongsTo(Product, { foreignKey: "product_id" });
+
+class Style extends Model {}
 Style.init(
   {
-    product_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    user_session: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    active: {
-      type: DataTypes.INTEGER,
-    }
+    productId: DataTypes.INTEGER,
+    name: DataTypes.TEXT,
+    sale_price: DataTypes.INTEGER,
+    original_price: DataTypes.INTEGER,
+    default_style: DataTypes.INTEGER,
   },
-  {
-    sequelize,
-    modelName: "Carts",
-    createAt: false,
-    updateAt: false,
-    timestamps: false,
-  }
+  { sequelize, tableName: "Styles", timestamps: false }
 );
 
-class Features extends Model {}
-Product.init(
+class sku extends Model {}
+sku.init(
   {
-    product_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    feature: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    value: {
-      type: DataTypes.TEXT,
-    },
+    style_id: DataTypes.INTEGER,
+    size: DataTypes.TEXT,
+    quantity: DataTypes.INTEGER,
   },
-  {
-    sequelize,
-    modelName: "Features",
-    createAt: false,
-    updateAt: false,
-    timestamps: false,
-  }
+  { sequelize, tableName: "Skus", timestamps: false }
 );
 
-class Skus extends Model {}
-Product.init(
+Style.hasMany(sku, { foreignKey: "style_id" });
+sku.belongsTo(Style, { foreignKey: "style_id" });
+
+class photo extends Model {}
+photo.init(
   {
-    style_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    size: {
-      type: DataTypes.TEXT
-    },
-    quantity: {
-      type: DataTypes.INTEGER,
-    },
+    styleId: DataTypes.INTEGER,
+    url: DataTypes.TEXT,
+    thumbnail_url: DataTypes.TEXT
   },
-  {
-    sequelize,
-    modelName: "Skus",
-    createAt: false,
-    updateAt: false,
-    timestamps: false,
-  }
+  { sequelize, tableName: "Photos", timestamps: false }
 );
 
+Style.hasMany(photo, { foreignKey: "styleId" });
+photo.belongsTo(Style, { as: 'photos', foreignKey: "styleId" });
 
-sequelize.sync();
+class Related extends Model {}
+Related.init(
+  {
+    current_product_id: DataTypes.INTEGER,
+    related_product_id: DataTypes.INTEGER,
+  },
+  { sequelize, tableName: "Related", timestamps: false }
+);
+
+class Cart extends Model {}
+Cart.init(
+  {
+    user_session: DataTypes.INTEGER,
+    product_id: DataTypes.INTEGER,
+    active: DataTypes.INTEGER,
+  },
+  { sequelize, tableName: "Carts", timestamps: false }
+);
+
+sequelize.sync({ alter: true });
 
 module.exports = {
-  Style,
   Product,
-  Photos,
-  Carts,
-  Features,
-  Skus
+  feature,
+  Style,
+  sku,
+  photo,
+  Related,
+  Cart,
 };
+

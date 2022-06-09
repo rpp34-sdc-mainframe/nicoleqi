@@ -1,6 +1,6 @@
 const app = require('express');
 const router = app.Router();
-const {Carts} = require('../db/module.js');
+const { Skus, Carts} = require('../db/module');
 
 router.get('/', function (req, res) {
   let offset = (req.query.page - 1 ) * req.query.count;
@@ -13,28 +13,15 @@ router.get('/', function (req, res) {
   })
 });
 
-router.get('/create', function (req, res) {
-  Carts.create({ product_id: req.query.product_id }, { where: { id: req.query.id } }).then(result => {
+router.post('/', function (req, res) {
+  Skus.findAll({ where: { id: req.body.sku_id } }).then(sku => {
+    Carts.create({ product_id: sku.product_id } ).then(result => {
       res.status(200).json(result)
-  }).catch(error => {
+    }).catch(error => {
       console.log(error)
-  })
-});
-
-router.get('/update', function (req, res) {
-  Carts.update({ product_id: req.query.product_id }, { where: { id: req.query.id } }).then(result => {
-      res.status(200).json(result)
-  }).catch(error => {
-      console.log(error)
-  })
-});
-
-router.get('/delete', function (req, res) {
-  Carts.destory({ product_id: req.query.product_id }, { where: { id: req.query.id } }).then(result => {
-      res.status(200).json(result)
-  }).catch(error => {
-      console.log(error)
-  })
+      res.status(200).json(error)
+    });
+  });
 });
 
 module.exports = router;

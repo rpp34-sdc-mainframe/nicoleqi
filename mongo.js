@@ -14,6 +14,7 @@ const feature = new Schema({
   feature_id: Number,
   feature:String,
   value:String,
+
 })
 
 const style = new Schema({

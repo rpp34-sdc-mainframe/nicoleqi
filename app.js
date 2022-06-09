@@ -1,18 +1,23 @@
 var express = require('express');
-const db = require('./pg')
 var productRouter = require('./routes/products');
-var styleRouter = require('./routes/style');
-var photoRouter = require('./routes/photos.js');
-var cartRouter = require('./routes/carts.js');
-var featureRouter = require('./routes/features.js');
-var skuRouter = require('./routes/skus.js');
+var cartRouter = require('./routes/carts');
 var app = express();
+var bodyParser = require("body-parser");
+const errors = require("express-async-errors");
 
-app.use('/style', styleRouter);
 app.use('/products', productRouter);
-app.use('/photos', photoRouter);
-app.use('/carts', cartRouter);
-app.use('./features', featureRouter);
-app.use('./skus', skuRouter);
+app.use('/carts', bodyParser.json(), cartRouter);
+
+/**
+ * 全局异常处理
+ */
+app.use((err, req, res, next) => {
+  // console.log(req)
+  res.status(200).json({ code: 500, msg: "server error" });
+  next(err);
+});
+
+
+module.exports = app;
 
 var server = app.listen(8088);
