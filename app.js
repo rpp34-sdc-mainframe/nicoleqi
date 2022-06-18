@@ -3,6 +3,8 @@ var productRouter = require('./routes/products');
 var app = express();
 var bodyParser = require("body-parser");
 const errors = require("express-async-errors");
+const cors = require('cors')
+app.use(cors())
 
 app.use('/products', productRouter);
 
